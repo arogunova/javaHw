@@ -1,17 +1,47 @@
 package ru.hofftech;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import ru.hofftech.model.Parcel;
+import ru.hofftech.file.ParcelFileReader;
+import ru.hofftech.service.TruckLoader;
+import ru.hofftech.model.Truck;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Главный класс программы.
+ * Теперь программа:
+ * 1. Читает посылки из файла
+ * 2. Загружает их в машины
+ * 3. Показывает результат
+ */
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        String filePath = "C:\\Users\\7101595\\Desktop\\java\\test.txt";
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        // Шаг 1: Читаем посылки из файла
+        ParcelFileReader reader = new ParcelFileReader();
+
+        try {
+            List<Parcel> parcels = reader.readFromFile(filePath);
+            System.out.println("\nFile successfully loaded!");
+            reader.printParcels(parcels);
+
+            // Шаг 2: Загружаем посылки в машины
+            TruckLoader loader = new TruckLoader();
+
+            // Пробуем оба алгоритма
+            System.out.println("\n\n=== TESTING SIMPLE ALGORITHM ===");
+            List<Truck> simpleTrucks = loader.loadParcels(parcels, false);
+            loader.printTrucks(simpleTrucks);
+
+            System.out.println("\n\n=== TESTING OPTIMAL ALGORITHM ===");
+            List<Truck> optimalTrucks = loader.loadParcels(parcels, true);
+            loader.printTrucks(optimalTrucks);
+
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Check path: " + filePath);
         }
     }
 }
