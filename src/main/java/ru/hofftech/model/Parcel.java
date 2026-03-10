@@ -5,14 +5,14 @@ import java.util.List;
 
 /**
  * Класс Parcel (Посылка) - модель данных, представляющая одну посылку.
- *
+
  * Этот класс хранит информацию о посылке:
  * - shape - форма посылки (список строк)
  * - symbol - символ, из которого состоит посылка
  * - width - ширина посылки
  * - height - высота посылки
  * - area - площадь (сколько клеток занимает)
- *
+
  * Класс является immutable (неизменяемым) - после создания объекта
  * изменить его поля нельзя (все поля final).
  */
@@ -67,60 +67,97 @@ public class Parcel {
      * @param symbol символ посылки
      */
     public Parcel(List<String> shape, char symbol) {
+        // Проверяем входные данные
+        validateInput(shape, symbol);
+
         // Сохраняем переданные значения в поля класса
-        // this.shape - обращение к полю класса
-        // shape - параметр конструктора
         this.shape = shape;
         this.symbol = symbol;
 
-        // ===== ВЫЧИСЛЯЕМ ВЫСОТУ =====
-        // Высота - это просто количество строк в shape
-        this.height = shape.size();
+        // Вычисляем характеристики посылки
+        this.height = calculateHeight(shape);
+        this.width = calculateWidth(shape);
+        this.area = calculateArea(shape, symbol);
+    }
 
-        // ===== ВЫЧИСЛЯЕМ ШИРИНУ =====
-        // Ширина - это максимальная длина строки
-        // Проходим по всем строкам и ищем самую длинную
-        int maxWidth = 0;  // переменная для хранения максимальной ширины
+    // =============== ПРИВАТНЫЕ МЕТОДЫ ДЛЯ ВЫЧИСЛЕНИЙ ===============
 
-        // Цикл по всем строкам посылки
-        for (String line : shape) {
-            // line.length() - длина текущей строки
-            // Если текущая строка длиннее, чем мы видели раньше
-            if (line.length() > maxWidth) {
-                maxWidth = line.length();  // запоминаем новую максимальную длину
-            }
+    /**
+     * Проверяет корректность входных данных.
+     *
+     * @param shape форма посылки
+     * @param symbol символ посылки
+     * @throws IllegalArgumentException если данные некорректны
+     */
+    private void validateInput(List<String> shape, char symbol) {
+        if (shape == null) {
+            throw new IllegalArgumentException("Shape cannot be null");
         }
-        // Сохраняем вычисленную ширину в поле класса
-        this.width = maxWidth;
-
-        // ===== ВЫЧИСЛЯЕМ ПЛОЩАДЬ =====
-        // Площадь - это количество символов посылки
-        // Важно! Считаем ТОЛЬКО символы, которыми нарисована посылка
-        // Если в форме есть пробелы - их не считаем
-        int areaCount = 0;  // переменная для подсчета площади
-
-        // Внешний цикл - по строкам
+        if (shape.isEmpty()) {
+            throw new IllegalArgumentException("Shape cannot be empty");
+        }
+        if (symbol == ' ') {
+            throw new IllegalArgumentException("Symbol cannot be space");
+        }
+        // Проверяем, что все строки содержат только символ посылки или пробелы
         for (String line : shape) {
-            // Внутренний цикл - по символам в строке
             for (int i = 0; i < line.length(); i++) {
-                // line.charAt(i) - символ в позиции i
-                // Если символ равен символу посылки
-                if (line.charAt(i) == symbol) {
-                    areaCount++;  // увеличиваем счетчик
+                char c = line.charAt(i);
+                if (c != symbol && c != ' ') {
+                    throw new IllegalArgumentException(
+                            "Shape contains invalid character '" + c + "'. Expected '" + symbol + "' or space"
+                    );
                 }
-                // Если символ не равен symbol (например, пробел) - пропускаем
             }
         }
-        // Сохраняем вычисленную площадь в поле класса
-        this.area = areaCount;
+    }
 
-        // Можно добавить отладочный вывод, чтобы видеть, как создается посылка
-        // System.out.println("Created: " + this); // Раскомментируй для отладки
+    /**
+     * Вычисляет высоту посылки.
+     *
+     * @param shape форма посылки
+     * @return количество строк
+     */
+    private int calculateHeight(List<String> shape) {
+        return shape.size();
+    }
+
+    /**
+     * Вычисляет ширину посылки (максимальная длина строки).
+     *
+     * @param shape форма посылки
+     * @return максимальная длина строки
+     */
+    private int calculateWidth(List<String> shape) {
+        int maxWidth = 0;
+        for (String line : shape) {
+            if (line.length() > maxWidth) {
+                maxWidth = line.length();
+            }
+        }
+        return maxWidth;
+    }
+
+    /**
+     * Вычисляет площадь посылки (количество символов symbol).
+     *
+     * @param shape форма посылки
+     * @param symbol символ посылки
+     * @return количество клеток, которые занимает посылка
+     */
+    private int calculateArea(List<String> shape, char symbol) {
+        int areaCount = 0;
+        for (String line : shape) {
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) == symbol) {
+                    areaCount++;
+                }
+            }
+        }
+        return areaCount;
     }
 
     // =============== ГЕТТЕРЫ ===============
-    // Геттеры - методы для получения значений полей
-    // Они нужны, потому что поля private (закрытые)
 
     /**
      * Возвращает форму посылки.
@@ -166,38 +203,12 @@ public class Parcel {
 
     /**
      * Переопределяем метод toString().
-     * Этот метод автоматически вызывается, когда мы пытаемся вывести объект:
-     * System.out.println(parcel);
      *
      * @return строковое представление посылки
      */
     @Override
     public String toString() {
-        // String.format - создает строку по шаблону
-        // %c - символ, %d - число
         return String.format("Parcel '%c': %dx%d, area=%d",
-                symbol,    // символ посылки
-                width,     // ширина
-                height,    // высота
-                area       // площадь
-        );
-        // Результат будет выглядеть: Parcel '9': 3x3, area=9
-    }
-
-    /**
-     * Дополнительный метод для проверки, является ли посылка квадратной.
-     * Не обязателен для задания, но может пригодиться.
-     * @return true если ширина равна высоте
-     */
-    public boolean isSquare() {
-        return width == height;
-    }
-
-    /**
-     * Дополнительный метод для проверки, полностью ли заполнена посылка.
-     * @return true если площадь равна ширине * высоте (нет пустот)
-     */
-    public boolean isFilled() {
-        return area == width * height;
+                symbol, width, height, area);
     }
 }

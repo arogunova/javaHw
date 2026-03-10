@@ -1,10 +1,11 @@
-package ru.hofftech;
-
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.model.Truck;
 import ru.hofftech.model.PlacementResult;
@@ -13,9 +14,11 @@ import ru.hofftech.service.TruckLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Тесты для TruckLoader с использованием JUnit 5 и AssertJ.
- *
+
  * Проверяем:
  * 1. Простой алгоритм (одна посылка - одна машина)
  * 2. Оптимальный алгоритм с разными комбинациями посылок
@@ -102,13 +105,13 @@ public class TruckLoaderTest {
                 .as("Две посылки 3x3 должны влезть в одну машину 6x6")
                 .hasSize(1);
 
-        assertThat(trucks.get(0).getPackagesCount())
+        assertThat(trucks.getFirst().getPackagesCount())
                 .as("В машине должно быть 2 посылки")
                 .isEqualTo(2);
 
         // Выводим результат для наглядности
         System.out.println("\nРезультат загрузки:");
-        System.out.println(trucks.get(0));
+        System.out.println(trucks.getFirst());
 
         System.out.println("✅ Тест пройден: обе посылки поместились в одну машину");
     }
@@ -153,7 +156,7 @@ public class TruckLoaderTest {
 
         // Выводим результат
         System.out.println("\nРезультат загрузки (1 машина с 3 посылками):");
-        System.out.println(trucks.get(0));
+        System.out.println(trucks.getFirst());
 
         System.out.println("✅ Тест пройден: все три посылки поместились в одну машину");
     }
@@ -186,12 +189,12 @@ public class TruckLoaderTest {
                 .as("Четыре посылки 3x3 занимают ровно 36 клеток - одна машина")
                 .hasSize(1);
 
-        assertThat(trucks.get(0).getPackagesCount())
+        assertThat(trucks.getFirst().getPackagesCount())
                 .as("В машине должно быть 4 посылки")
                 .isEqualTo(4);
 
         System.out.println("\nРезультат загрузки (идеальное заполнение):");
-        System.out.println(trucks.get(0));
+        System.out.println(trucks.getFirst());
 
         System.out.println("✅ Тест пройден: 4 посылки в одной машине");
     }
@@ -231,9 +234,7 @@ public class TruckLoaderTest {
                 .as("Посылка с опорой на 2 клетки из 2 (100%) должна ставиться")
                 .isTrue();
 
-        if (canPlaceGood) {
-            System.out.println("  ✅ Можно поставить (опора 2/2 = 100% > 50%)");
-        }
+        System.out.println("  ✅ Можно поставить (опора 2/2 = 100% > 50%)");
 
         // Test 2: Ставим со сдвигом (только 1 клетка опоры)
         System.out.println("\nПроверка 2: Посылка со сдвигом (1 клетка опоры)");
@@ -243,9 +244,7 @@ public class TruckLoaderTest {
                 .as("Посылка с опорой на 1 клетку из 2 (50%) НЕ должна ставиться")
                 .isFalse();
 
-        if (!canPlaceBad) {
-            System.out.println("  ✅ Нельзя поставить (опора 1/2 = 50%, а нужно >50%)");
-        }
+        System.out.println("  ✅ Нельзя поставить (опора 1/2 = 50%, а нужно >50%)");
 
         System.out.println("✅ Тест пройден: правило опоры работает правильно");
     }
@@ -358,12 +357,12 @@ public class TruckLoaderTest {
                 .as("Посылка 6x6 должна занять ровно одну машину")
                 .hasSize(1);
 
-        assertThat(trucks.get(0).getPackagesCount())
+        assertThat(trucks.getFirst().getPackagesCount())
                 .as("В машине должна быть 1 посылка")
                 .isEqualTo(1);
 
         System.out.println("Результат:");
-        System.out.println(trucks.get(0));
+        System.out.println(trucks.getFirst());
 
         System.out.println("✅ Тест пройден: посылка точно вписалась в кузов");
     }
