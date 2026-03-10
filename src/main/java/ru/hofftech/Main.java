@@ -8,18 +8,10 @@ import ru.hofftech.model.Truck;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Главный класс программы.
- * Теперь программа:
- * 1. Читает посылки из файла
- * 2. Загружает их в машины
- * 3. Показывает результат
- */
 public class Main {
     public static void main(String[] args) {
         String filePath = "C:\\Users\\7101595\\Desktop\\java\\test.txt";
 
-        // Шаг 1: Читаем посылки из файла
         ParcelFileReader reader = new ParcelFileReader();
 
         try {
@@ -27,10 +19,8 @@ public class Main {
             System.out.println("\nFile successfully loaded!");
             reader.printParcels(parcels);
 
-            // Шаг 2: Загружаем посылки в машины
             TruckLoader loader = new TruckLoader();
 
-            // Пробуем оба алгоритма
             System.out.println("\n\n=== TESTING SIMPLE ALGORITHM ===");
             List<Truck> simpleTrucks = loader.loadParcels(parcels, false);
             loader.printTrucks(simpleTrucks);
