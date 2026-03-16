@@ -1,5 +1,7 @@
 package ru.hofftech;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.file.ParcelFileReader;
 import ru.hofftech.service.TruckLoader;
@@ -9,8 +11,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         if (args.length < 2) {
+            log.error("Insufficient arguments provided");
             printUsage();
             return;
         }
@@ -19,35 +24,35 @@ public class Main {
         String algorithm = args[1];
 
         if (!isValidAlgorithm(algorithm)) {
-            System.err.println("Error: Unknown algorithm '" + algorithm + "'");
+            log.error("Unknown algorithm: {}", algorithm);
             printUsage();
             return;
         }
 
-        System.out.println("=== TRUCK LOADER ===");
-        System.out.println("File: " + filePath);
-        System.out.println("Algorithm: " + algorithm);
-        System.out.println("===================\n");
+        log.info("=== TRUCK LOADER ===");
+        log.info("File: {}", filePath);
+        log.info("Algorithm: {}", algorithm);
+        log.info("===================");
 
         ParcelFileReader reader = new ParcelFileReader();
 
         try {
             List<Parcel> parcels = reader.readFromFile(filePath);
-            System.out.println("\n✅ File successfully loaded!");
+            log.info("✅ File successfully loaded!");
             reader.printParcels(parcels);
 
             TruckLoader loader = new TruckLoader();
 
-            System.out.println("\n\n=== LOADING WITH " + algorithm.toUpperCase() + " ALGORITHM ===");
+            log.info("=== LOADING WITH {} ALGORITHM ===", algorithm.toUpperCase());
             List<Truck> trucks = loader.loadParcels(parcels, algorithm);
 
             loader.printTrucks(trucks);
 
         } catch (IOException e) {
-            System.err.println("\n❌ Error reading file: " + e.getMessage());
-            System.err.println("Check path: " + filePath);
+            log.error("Error reading file: {}", e.getMessage());
+            log.error("Check path: {}", filePath);
         } catch (IllegalArgumentException e) {
-            System.err.println("\n❌ Error: " + e.getMessage());
+            log.error("Error: {}", e.getMessage());
         }
     }
 

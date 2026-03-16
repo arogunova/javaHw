@@ -7,16 +7,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParcelFileReader {
+    private static final Logger log = LoggerFactory.getLogger(ParcelFileReader.class);
 
     public List<Parcel> readFromFile(String filePath) throws IOException {
-        System.out.println("Reading file: " + filePath);
+        log.info("Reading file: {}", filePath);
 
         List<String> allLines = Files.readAllLines(Paths.get(filePath));
-
         List<Parcel> parcels = new ArrayList<>();
-
         List<String> currentParcelLines = new ArrayList<>();
 
         for (String line : allLines) {
@@ -24,10 +25,8 @@ public class ParcelFileReader {
                 if (!currentParcelLines.isEmpty()) {
                     Parcel parcel = createParcel(currentParcelLines);
                     parcels.add(parcel);
-
                     currentParcelLines = new ArrayList<>();
-
-                    System.out.println("Found parcel with symbol: " + parcel.getSymbol()); 
+                    log.debug("Found parcel with symbol: {}", parcel.getSymbol());
                 }
             } else {
                 currentParcelLines.add(line);
@@ -37,10 +36,10 @@ public class ParcelFileReader {
         if (!currentParcelLines.isEmpty()) {
             Parcel parcel = createParcel(currentParcelLines);
             parcels.add(parcel);
-            System.out.println("Found last parcel with symbol: " + parcel.getSymbol()); 
+            log.debug("Found last parcel with symbol: {}", parcel.getSymbol());
         }
 
-        System.out.println("Total parcels found: " + parcels.size()); 
+        log.info("Total parcels found: {}", parcels.size());
         return parcels;
     }
 
@@ -58,9 +57,11 @@ public class ParcelFileReader {
         }
 
         if (symbol == '?') {
+            log.error("Parcel has no visible symbols in lines: {}", lines);
             throw new IllegalArgumentException("Parcel has no visible symbols");
         }
 
+        log.debug("Created parcel with symbol: {}", symbol);
         return new Parcel(lines, symbol);
     }
 
