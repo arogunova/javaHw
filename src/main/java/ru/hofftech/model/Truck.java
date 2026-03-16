@@ -1,6 +1,5 @@
 package ru.hofftech.model;
 
-// Импорты для работы с коллекциями
 import java.util.ArrayList;
 import java.util.List;
 
