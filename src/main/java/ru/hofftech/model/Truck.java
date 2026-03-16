@@ -40,7 +40,6 @@ public class Truck {
             for (int px = 0; px < parcel.getWidth(); px++) {
                 List<String> shape = parcel.getShape();
                 int shapeRow = parcel.getHeight() - 1 - py;
-
                 String currentLine = shape.get(shapeRow);
 
                 if (px >= currentLine.length()) {
@@ -49,15 +48,15 @@ public class Truck {
 
                 if (currentLine.charAt(px) == parcel.getSymbol()) {
                     if (grid[y + py][x + px] != ' ') {
+                        System.out.println("  Cannot place: cell (" + (x + px) + "," + (y + py) +
+                                ") occupied by '" + grid[y + py][x + px] + "'");
                         return false;
                     }
                 }
             }
         }
 
-        int bottomY = y + parcel.getHeight() - 1;
-
-        if (bottomY == SIZE - 1) {
+        if (y == 0) {
             System.out.println("  Placing on floor (good support)");
             return true;
         }
@@ -67,11 +66,16 @@ public class Truck {
 
         for (int px = 0; px < parcel.getWidth(); px++) {
             List<String> shape = parcel.getShape();
+            String bottomLine = shape.get(parcel.getHeight() - 1);
 
-            if (shape.get(parcel.getHeight() - 1).charAt(px) == parcel.getSymbol()) {
+            if (px >= bottomLine.length()) {
+                continue;
+            }
+
+            if (bottomLine.charAt(px) == parcel.getSymbol()) {
                 bottomWidth++;
 
-                if (grid[bottomY + 1][x + px] != ' ') {
+                if (grid[y - 1][x + px] != ' ') {
                     supportCount++;
                 }
             }
@@ -125,7 +129,7 @@ public class Truck {
         System.out.println("  Looking for place for parcel '" + parcel.getSymbol() +
                 "' (" + parcel.getWidth() + "x" + parcel.getHeight() + ")");
 
-        for (int y = 0; y <= SIZE - parcel.getHeight(); y++) {
+        for (int y = SIZE - parcel.getHeight(); y >= 0; y--) {
             for (int x = 0; x <= SIZE - parcel.getWidth(); x++) {
                 if (canPlace(parcel, x, y)) {
                     System.out.println("    Found place at (" + x + "," + y + ")");
