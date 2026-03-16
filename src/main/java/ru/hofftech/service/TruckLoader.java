@@ -5,28 +5,13 @@ import ru.hofftech.model.Truck;
 
 import java.util.List;
 
-/**
- * Фасад для загрузки посылок.
- * Выбирает нужную стратегию и делегирует ей работу.
- */
 public class TruckLoader {
 
-    /**
-     * Загружает посылки с указанной стратегией.
-     *
-     * @param parcels список посылок
-     * @param algorithm название алгоритма ("simple" или "maxdense")
-     * @return список загруженных машин
-     * @throws IllegalArgumentException если алгоритм не найден
-     */
     public List<Truck> loadParcels(List<Parcel> parcels, String algorithm) {
         LoadingStrategy strategy = createStrategy(algorithm);
         return strategy.load(parcels);
     }
 
-    /**
-     * Фабричный метод - создает нужную стратегию по имени.
-     */
     private LoadingStrategy createStrategy(String algorithm) {
         return switch (algorithm.toLowerCase()) {
             case "simple" -> new LoadingStrategySimple();
@@ -37,9 +22,6 @@ public class TruckLoader {
         };
     }
 
-    /**
-     * Печатает результат загрузки.
-     */
     public void printTrucks(List<Truck> trucks) {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("LOADING RESULT");
@@ -60,9 +42,6 @@ public class TruckLoader {
         printStatistics(trucks);
     }
 
-    /**
-     * Считает статистику.
-     */
     private void printStatistics(List<Truck> trucks) {
         System.out.println("\n" + "-".repeat(30));
         System.out.println("STATISTICS");
