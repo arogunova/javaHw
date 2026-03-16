@@ -39,11 +39,16 @@ public class Truck {
         for (int py = 0; py < parcel.getHeight(); py++) {
             for (int px = 0; px < parcel.getWidth(); px++) {
                 List<String> shape = parcel.getShape();
+                int shapeRow = parcel.getHeight() - 1 - py;
 
-                if (shape.get(py).charAt(px) == parcel.getSymbol()) {
+                String currentLine = shape.get(shapeRow);
+
+                if (px >= currentLine.length()) {
+                    continue;
+                }
+
+                if (currentLine.charAt(px) == parcel.getSymbol()) {
                     if (grid[y + py][x + px] != ' ') {
-                        System.out.println("  Cannot place: cell (" + (x + px) + "," +
-                                (y + py) + ") occupied by '" + grid[y + py][x + px] + "'");
                         return false;
                     }
                 }
@@ -54,7 +59,7 @@ public class Truck {
 
         if (bottomY == SIZE - 1) {
             System.out.println("  Placing on floor (good support)");
-            return true; // на дне всегда есть опора
+            return true;
         }
 
         int bottomWidth = 0;
@@ -89,13 +94,19 @@ public class Truck {
         int y = result.getY();
 
         System.out.println("Placing parcel '" + parcel.getSymbol() +
-                "' at (" + x + "," + y + ")"); // отладка
+                "' at (" + x + "," + y + ")");
 
         for (int py = 0; py < parcel.getHeight(); py++) {
             for (int px = 0; px < parcel.getWidth(); px++) {
                 List<String> shape = parcel.getShape();
+                int shapeRow = parcel.getHeight() - 1 - py;
 
-                if (shape.get(py).charAt(px) == parcel.getSymbol()) {
+                String currentLine = shape.get(shapeRow);
+                if (px >= currentLine.length()) {
+                    continue;
+                }
+
+                if (currentLine.charAt(px) == parcel.getSymbol()) {
                     grid[y + py][x + px] = parcel.getSymbol();
                 }
             }
@@ -140,19 +151,15 @@ public class Truck {
         StringBuilder result = new StringBuilder();
 
         result.append('+');
-
         result.append("+".repeat(SIZE));
-
         result.append('+');
         result.append('\n');
 
-        for (int y = 0; y < SIZE; y++) {
+        for (int y = SIZE - 1; y >= 0; y--) {
             result.append('+');
-
             for (int x = 0; x < SIZE; x++) {
                 result.append(grid[y][x]);
             }
-
             result.append('+');
             result.append('\n');
         }

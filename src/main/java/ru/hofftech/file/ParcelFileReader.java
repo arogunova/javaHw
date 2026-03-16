@@ -43,15 +43,22 @@ public class ParcelFileReader {
         System.out.println("Total parcels found: " + parcels.size()); 
         return parcels;
     }
-    
-    private Parcel createParcel(List<String> lines) {
-        char symbol = '?'; 
 
+    private Parcel createParcel(List<String> lines) {
+        char symbol = '?';
         for (String line : lines) {
-            if (!line.trim().isEmpty()) {
-                symbol = line.charAt(0);
-                break;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (!Character.isWhitespace(c)) {
+                    symbol = c;
+                    break;
+                }
             }
+            if (symbol != '?') break;
+        }
+
+        if (symbol == '?') {
+            throw new IllegalArgumentException("Parcel has no visible symbols");
         }
 
         return new Parcel(lines, symbol);

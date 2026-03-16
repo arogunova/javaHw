@@ -28,16 +28,6 @@ public class Parcel {
         if (symbol == ' ') {
             throw new IllegalArgumentException("Symbol cannot be space");
         }
-        for (String line : shape) {
-            for (int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-                if (c != symbol && c != ' ') {
-                    throw new IllegalArgumentException(
-                            "Shape contains invalid character '" + c + "'. Expected '" + symbol + "' or space"
-                    );
-                }
-            }
-        }
     }
 
     private int calculateHeight(List<String> shape) {
