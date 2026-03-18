@@ -7,6 +7,7 @@ import ru.hofftech.file.ParcelFileReader;
 import ru.hofftech.service.LoadingException;
 import ru.hofftech.service.TruckLoader;
 import ru.hofftech.model.Truck;
+import ru.hofftech.json.JsonFileService;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,6 +16,37 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws LoadingException {
+        if (args.length == 0) {
+            printUsage();
+            return;
+        }
+        System.out.println("Received " + args.length + " arguments:");
+        for (int i = 0; i < args.length; i++) {
+            System.out.println("  args[" + i + "] = '" + args[i] + "'");
+        }
+
+        // ===== РЕЖИМ ЗАГРУЗКИ ИЗ JSON =====
+        if (args[0].equals("--load")) {
+            if (args.length < 2) {
+                System.err.println("Error: Missing JSON file path");
+                return;
+            }
+            String jsonFile = args[1];
+            log.info("Loading trucks from JSON: {}", jsonFile);
+
+            try {
+                // Загружаем машины из JSON файла
+                List<Truck> trucks = JsonFileService.loadFromFile(jsonFile);
+
+                // Показываем их на экране
+                TruckLoader loader = new TruckLoader();
+                loader.printTrucks(trucks);
+            } catch (Exception e) {
+                log.error("Error loading JSON: {}", e.getMessage());
+            }
+            return;
+        }
+
         if (args.length < 2) {
             log.error("Insufficient arguments provided");
             printUsage();
@@ -49,6 +81,17 @@ public class Main {
 
             loader.printTrucks(trucks);
 
+            // ===== СОХРАНЕНИЕ В JSON =====
+            if (args.length > 2 && args[2].equals("--save")) {
+                if (args.length < 4) {
+                    log.error("Missing output file for --save");
+                } else {
+                    String jsonFile = args[3];
+                    log.info("Saving result to JSON: {}", jsonFile);
+                    JsonFileService.saveToFile(trucks, jsonFile);
+                    System.out.println("✅ Saved to " + jsonFile);
+                }
+            }
         } catch (IOException e) {
             log.error("Error reading file: {}", e.getMessage());
             log.error("Check path: {}", filePath);

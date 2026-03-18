@@ -149,6 +149,39 @@ public class Truck {
         return packages.size();
     }
 
+    /**
+     * Размещает посылку в указанных координатах.
+     * Используется при загрузке из JSON.
+     */
+    public void placePackageAt(Parcel parcel, int x, int y) {
+        // Проверяем, что место свободно
+        if (!canPlace(parcel, x, y)) {
+            throw new IllegalArgumentException("Cannot place parcel at (" + x + "," + y + ")");
+        }
+
+        // Размещаем посылку
+        for (int py = 0; py < parcel.getHeight(); py++) {
+            for (int px = 0; px < parcel.getWidth(); px++) {
+                List<String> shape = parcel.getShape();
+                int shapeRow = parcel.getHeight() - 1 - py;
+
+                String currentLine = shape.get(shapeRow);
+                if (px >= currentLine.length()) continue;
+
+                if (currentLine.charAt(px) == parcel.getSymbol()) {
+                    grid[y + py][x + px] = parcel.getSymbol();
+                }
+            }
+        }
+
+        // Сохраняем информацию о посылке
+        Object[] packageInfo = new Object[3];
+        packageInfo[0] = parcel;
+        packageInfo[1] = x;
+        packageInfo[2] = y;
+        packages.add(packageInfo);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -172,5 +205,9 @@ public class Truck {
         result.append('+');
 
         return result.toString();
+    }
+
+    public List<Object[]> getPackagesInfo() {
+        return new ArrayList<>(packages);
     }
 }
