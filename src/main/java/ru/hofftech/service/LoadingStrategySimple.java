@@ -13,7 +13,7 @@ public class LoadingStrategySimple implements LoadingStrategy {
     private static final Logger log = LoggerFactory.getLogger(LoadingStrategySimple.class);
 
     @Override
-    public List<Truck> load(List<Parcel> parcels) {
+    public List<Truck> load(List<Parcel> parcels, int maxTrucks) throws LoadingException {
         log.info("--- USING SIMPLE LOADING STRATEGY ---");
         log.info("Each parcel will get its own truck");
 
@@ -22,6 +22,10 @@ public class LoadingStrategySimple implements LoadingStrategy {
         for (int i = 0; i < parcels.size(); i++) {
             Parcel parcel = parcels.get(i);
             log.info("Processing parcel {}: {}", (i + 1), parcel);
+
+            if (trucks.size() >= maxTrucks) {
+                throw new LoadingException("Need more than " + maxTrucks + " trucks");
+            }
 
             Truck truck = new Truck();
             log.debug("  Created new truck #{}", (trucks.size() + 1));

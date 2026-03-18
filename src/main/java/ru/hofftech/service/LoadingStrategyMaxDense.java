@@ -13,7 +13,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
     private static final Logger log = LoggerFactory.getLogger(LoadingStrategyMaxDense.class);
 
     @Override
-    public List<Truck> load(List<Parcel> parcels) {
+    public List<Truck> load(List<Parcel> parcels, int maxTrucks) throws LoadingException {
         log.info("--- USING MAX DENSE LOADING STRATEGY ---");
         log.info("Trying to pack parcels as tightly as possible");
 
@@ -41,7 +41,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
 
                 if (result.isFound()) {
                     truck.placePackage(parcel, result);
-                    log.info("    Placed at ({},{})", result.getX(), result.getY());
+                    log.info("    Placed in existing truck at ({},{})", result.getX(), result.getY());
                     placed = true;
                     break;
                 } else {
@@ -52,15 +52,20 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
             if (!placed) {
                 log.info("  No space in existing trucks, creating new truck #{}", (trucks.size() + 1));
 
+                if (trucks.size() >= maxTrucks) {
+                    throw new LoadingException("Need more than " + maxTrucks + " trucks");
+                }
+
                 Truck newTruck = new Truck();
                 PlacementResult result = newTruck.findPositionSimple(parcel);
 
                 if (result.isFound()) {
                     newTruck.placePackage(parcel, result);
-                    log.info("    Placed at ({},{})", result.getX(), result.getY());
+                    log.info("    Placed in new truck at ({},{})", result.getX(), result.getY());
                     trucks.add(newTruck);
                 } else {
                     log.error("    Cannot place parcel even in empty truck!");
+                    throw new LoadingException("Cannot place parcel " + parcel.getSymbol() + " in empty truck");
                 }
             }
         }

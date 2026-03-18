@@ -30,12 +30,12 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("Simple стратегия: одна посылка - одна машина")
-    void testSimpleStrategy() {
+    void testSimpleStrategy() throws LoadingException {
         // Создаем стратегию напрямую
         LoadingStrategy strategy = new LoadingStrategySimple();
 
         // Загружаем
-        List<Truck> trucks = strategy.load(testParcels);
+        List<Truck> trucks = strategy.load(testParcels, 10);
 
         // Проверяем
         assertThat(trucks)
@@ -53,12 +53,12 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("MaxDense стратегия: три посылки 3x3 должны поместиться в одну машину")
-    void testMaxDenseStrategy() {
+    void testMaxDenseStrategy() throws LoadingException{
         // Создаем стратегию напрямую
         LoadingStrategy strategy = new LoadingStrategyMaxDense();
 
         // Загружаем
-        List<Truck> trucks = strategy.load(testParcels);
+        List<Truck> trucks = strategy.load(testParcels, 1);
 
         // Проверяем - должно быть 1 машина с 3 посылками
         assertThat(trucks)
@@ -74,8 +74,8 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("TruckLoader с simple алгоритмом")
-    void testTruckLoaderWithSimple() {
-        List<Truck> trucks = loader.loadParcels(testParcels, "simple");
+    void testTruckLoaderWithSimple() throws LoadingException {
+        List<Truck> trucks = loader.loadParcels(testParcels, "simple", 3);
 
         assertThat(trucks).hasSize(3);
         assertThat(trucks.getFirst().getPackagesCount()).isEqualTo(1);
@@ -83,7 +83,7 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("TruckLoader с maxdense алгоритмом")
-    void testTruckLoaderWithMaxDense() {
+    void testTruckLoaderWithMaxDense() throws LoadingException{
         List<Truck> trucks = loader.loadParcels(testParcels, "maxdense");
 
         assertThat(trucks).hasSize(1);
@@ -93,9 +93,7 @@ public class TruckLoaderTest {
     @Test
     @DisplayName("TruckLoader с неизвестным алгоритмом должен кидать исключение")
     void testTruckLoaderWithUnknownAlgorithm() {
-        assertThatThrownBy(() -> {
-            loader.loadParcels(testParcels, "alien");
-        })
+        assertThatThrownBy(() -> loader.loadParcels(testParcels, "alien"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Unknown algorithm");
     }
@@ -122,13 +120,13 @@ public class TruckLoaderTest {
         truck.placePackage(base, baseResult);
 
         // Должно быть можно поставить прямо над основанием (2 клетки опоры)
-        boolean canPlaceGood = truck.canPlace(longParcel, 0, 3);
+        boolean canPlaceGood = truck.canPlace(longParcel, 0, 2);
         assertThat(canPlaceGood)
                 .as("Посылка с опорой на 2 клетки из 2 должна ставиться")
                 .isTrue();
 
         // Должно быть нельзя поставить со сдвигом (1 клетка опоры)
-        boolean canPlaceBad = truck.canPlace(longParcel, 1, 3);
+        boolean canPlaceBad = truck.canPlace(longParcel, 1, 2);
         assertThat(canPlaceBad)
                 .as("Посылка с опорой на 1 клетку из 2 НЕ должна ставиться")
                 .isFalse();
@@ -138,9 +136,9 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("Пустой список посылок")
-    void testEmptyList() {
+    void testEmptyList() throws LoadingException {
         LoadingStrategy strategy = new LoadingStrategySimple();
-        List<Truck> trucks = strategy.load(new ArrayList<>());
+        List<Truck> trucks = strategy.load(new ArrayList<>(), 5);
 
         assertThat(trucks)
                 .as("Пустой список должен вернуть пустой список машин")
@@ -149,7 +147,7 @@ public class TruckLoaderTest {
 
     @Test
     @DisplayName("Посылка точно по размеру кузова (6x6)")
-    void testExactFit() {
+    void testExactFit() throws LoadingException{
         // Создаем посылку 6x6
         List<String> fullShape = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
@@ -164,8 +162,8 @@ public class TruckLoaderTest {
         LoadingStrategy simple = new LoadingStrategySimple();
         LoadingStrategy dense = new LoadingStrategyMaxDense();
 
-        List<Truck> simpleTrucks = simple.load(oneParcel);
-        List<Truck> denseTrucks = dense.load(oneParcel);
+        List<Truck> simpleTrucks = simple.load(oneParcel, 1);
+        List<Truck> denseTrucks = dense.load(oneParcel, 1);
 
         // Обе должны создать одну машину
         assertThat(simpleTrucks).hasSize(1);

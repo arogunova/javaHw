@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.file.ParcelFileReader;
+import ru.hofftech.service.LoadingException;
 import ru.hofftech.service.TruckLoader;
 import ru.hofftech.model.Truck;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws LoadingException {
         if (args.length < 2) {
             log.error("Insufficient arguments provided");
             printUsage();
