@@ -1,9 +1,12 @@
 import org.junit.jupiter.api.*;
+import ru.hofftech.json.JsonFileService;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.model.Truck;
 import ru.hofftech.model.PlacementResult;
 import ru.hofftech.service.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,6 +174,79 @@ public class TruckLoaderTest {
 
         assertThat(simpleTrucks.getFirst().getPackagesCount()).isEqualTo(1);
         assertThat(denseTrucks.getFirst().getPackagesCount()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Сохранение результата в JSON")
+    void testSaveToJson() throws Exception {
+        // Загружаем посылки
+        List<Parcel> parcels = createTestParcels();
+
+        // Упаковываем
+        TruckLoader loader = new TruckLoader();
+        List<Truck> trucks = loader.loadParcels(parcels, "maxdense", 5);
+
+        // ===== ИСПОЛЬЗУЕМ ВРЕМЕННЫЙ ФАЙЛ =====
+        Path tempFile = Files.createTempFile("test", ".json");
+        String tempFilePath = tempFile.toString();
+
+        try {
+            // Сохраняем
+            JsonFileService.saveToFile(trucks, tempFilePath);
+
+            // Проверяем, что файл создался
+            assertThat(Files.exists(tempFile)).isTrue();
+
+            // Читаем обратно
+            List<Truck> loadedTrucks = JsonFileService.loadFromFile(tempFilePath);
+
+            // Проверяем, что количество машин совпадает
+            assertThat(loadedTrucks).hasSize(trucks.size());
+
+        } finally {
+            // Удаляем временный файл
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    @DisplayName("Загрузка из JSON")
+    void testLoadFromJson() throws Exception {
+        // Подготовим JSON строку
+        String json = """
+        {
+          "trucks": [
+            {
+              "parcels": [
+                {
+                  "shape": ["999","999","999"],
+                  "pos": [0,0]
+                }
+              ]
+            }
+          ]
+        }
+        """;
+
+        // ===== ИСПОЛЬЗУЕМ ВРЕМЕННЫЙ ФАЙЛ =====
+        Path tempFile = Files.createTempFile("test", ".json");
+        String tempFilePath = tempFile.toString();
+
+        try {
+            // Сохраняем JSON во временный файл
+            Files.writeString(tempFile, json);
+
+            // Загружаем
+            List<Truck> trucks = JsonFileService.loadFromFile(tempFilePath);
+
+            // Проверяем
+            assertThat(trucks).hasSize(1);
+            assertThat(trucks.getFirst().getPackagesCount()).isEqualTo(1);
+
+        } finally {
+            // Удаляем временный файл
+            Files.deleteIfExists(tempFile);
+        }
     }
 
     // =============== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ===============

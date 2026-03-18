@@ -2,15 +2,10 @@ package ru.hofftech.json;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-/**
- * Модель посылки для JSON.
- * Хранит форму и координаты.
- */
 public class ParcelJson {
     private List<String> shape;
-    private List<Integer> pos;  // [x, y]
+    private List<Integer> pos;
 
-    // Пустой конструктор нужен для Jackson
     @SuppressWarnings("unused")
     public ParcelJson() {
     }
@@ -24,14 +19,17 @@ public class ParcelJson {
         return shape;
     }
 
+    @SuppressWarnings("unused")
     public void setShape(List<String> shape) {
         this.shape = shape;
     }
 
+    @SuppressWarnings("unused")
     public List<Integer> getPos() {
         return pos;
     }
 
+    @SuppressWarnings("unused")
     public void setPos(List<Integer> pos) {
         this.pos = pos;
     }

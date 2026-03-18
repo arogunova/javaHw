@@ -2,12 +2,12 @@ package ru.hofftech.json;
 
 import java.util.List;
 
-/**
- * Корневая модель для JSON файла.
- * Хранит список машин.
- */
 public class LoadingResultJson {
     private List<TruckJson> trucks;
+
+    @SuppressWarnings("unused")
+    public LoadingResultJson() {
+    }
 
     public LoadingResultJson(List<TruckJson> trucks) {
         this.trucks = trucks;
@@ -15,5 +15,10 @@ public class LoadingResultJson {
 
     public List<TruckJson> getTrucks() {
         return trucks;
+    }
+
+    @SuppressWarnings("unused")
+    public void setTrucks(List<TruckJson> trucks) {
+        this.trucks = trucks;
     }
 }

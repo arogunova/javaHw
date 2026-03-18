@@ -25,7 +25,6 @@ public class Main {
             System.out.println("  args[" + i + "] = '" + args[i] + "'");
         }
 
-        // ===== РЕЖИМ ЗАГРУЗКИ ИЗ JSON =====
         if (args[0].equals("--load")) {
             if (args.length < 2) {
                 System.err.println("Error: Missing JSON file path");
@@ -35,10 +34,8 @@ public class Main {
             log.info("Loading trucks from JSON: {}", jsonFile);
 
             try {
-                // Загружаем машины из JSON файла
                 List<Truck> trucks = JsonFileService.loadFromFile(jsonFile);
 
-                // Показываем их на экране
                 TruckLoader loader = new TruckLoader();
                 loader.printTrucks(trucks);
             } catch (Exception e) {
@@ -81,7 +78,6 @@ public class Main {
 
             loader.printTrucks(trucks);
 
-            // ===== СОХРАНЕНИЕ В JSON =====
             if (args.length > 2 && args[2].equals("--save")) {
                 if (args.length < 4) {
                     log.error("Missing output file for --save");
@@ -107,15 +103,23 @@ public class Main {
 
     private static void printUsage() {
         System.out.println("=== TRUCK LOADER USAGE ===");
-        System.out.println("java ru.hofftech.Main <file-path> <algorithm>");
+        System.out.println("1. Load parcels from text file and pack:");
+        System.out.println("   java ru.hofftech.Main <file-path> <algorithm> <max-trucks> [--save <json-file>]");
+        System.out.println();
+        System.out.println("2. Load already packed trucks from JSON:");
+        System.out.println("   java ru.hofftech.Main --load <json-file>");
         System.out.println();
         System.out.println("Arguments:");
-        System.out.println("  file-path   - path to file with parcels");
+        System.out.println("  file-path   - path to file with parcels (.txt)");
         System.out.println("  algorithm   - loading algorithm: simple | maxdense");
+        System.out.println("  max-trucks  - maximum number of trucks allowed");
+        System.out.println("  --save      - save result to JSON file");
+        System.out.println("  --load      - load result from JSON file");
         System.out.println();
         System.out.println("Examples:");
-        System.out.println("  java ru.hofftech.Main test.txt simple");
-        System.out.println("  java ru.hofftech.Main test.txt maxdense");
+        System.out.println("  java ru.hofftech.Main test.txt maxdense 3");
+        System.out.println("  java ru.hofftech.Main test.txt simple 2 --save result.json");
+        System.out.println("  java ru.hofftech.Main --load result.json");
         System.out.println("=========================");
     }
 }
