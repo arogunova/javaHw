@@ -10,15 +10,13 @@ import java.util.List;
 public class TruckLoader {
     private static final Logger log = LoggerFactory.getLogger(TruckLoader.class);
 
-    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm, int maxTrucks)
-            throws LoadingException {
+    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm, int maxTrucks) {
         log.info("Loading parcels with algorithm: {}", algorithm);
         LoadingStrategy strategy = createStrategy(algorithm);
         return strategy.load(parcels, maxTrucks);
     }
 
-    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm)
-            throws LoadingException {
+    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm) {
         return loadParcels(parcels, algorithm, 1);
     }
     private LoadingStrategy createStrategy(String algorithm) {

@@ -13,7 +13,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
     private static final Logger log = LoggerFactory.getLogger(LoadingStrategyMaxDense.class);
 
     @Override
-    public List<Truck> load(List<Parcel> parcels, int maxTrucks) throws LoadingException {
+    public List<Truck> load(List<Parcel> parcels, int maxTrucks) {
         log.info("--- USING MAX DENSE LOADING STRATEGY ---");
         log.info("Trying to pack parcels as tightly as possible");
 

@@ -6,5 +6,5 @@ import ru.hofftech.model.Truck;
 import java.util.List;
 
 public interface LoadingStrategy {
-    List<Truck> load(List<Parcel> parcels, int maxTrucks) throws LoadingException;
+    List<Truck> load(List<Parcel> parcels, int maxTrucks);
 }
