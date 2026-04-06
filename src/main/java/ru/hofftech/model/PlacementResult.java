@@ -1,14 +1,20 @@
 package ru.hofftech.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PlacementResult {
-    private final boolean found;  // true если место найдено
-    private final int x;          // координата X (если найдено)
-    private final int y;          // координата Y (если найдено)
+    private static final Logger log = LoggerFactory.getLogger(PlacementResult.class);
+
+    private final boolean found;
+    private final int x;
+    private final int y;
 
     public PlacementResult(boolean found, int x, int y) {
         this.found = found;
         this.x = x;
         this.y = y;
+        log.debug("PlacementResult created: found={}, x={}, y={}", found, x, y);
     }
 
     public PlacementResult(boolean found) {

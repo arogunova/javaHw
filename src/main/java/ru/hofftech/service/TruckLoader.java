@@ -1,24 +1,41 @@
 package ru.hofftech.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.model.Truck;
 
 import java.util.List;
 
 public class TruckLoader {
+    private static final Logger log = LoggerFactory.getLogger(TruckLoader.class);
 
-    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm) {
+    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm, int maxTrucks) {
+        log.info("Loading parcels with algorithm: {}", algorithm);
         LoadingStrategy strategy = createStrategy(algorithm);
-        return strategy.load(parcels);
+        return strategy.load(parcels, maxTrucks);
     }
 
+    public List<Truck> loadParcels(List<Parcel> parcels, String algorithm) {
+        return loadParcels(parcels, algorithm, 1);
+    }
     private LoadingStrategy createStrategy(String algorithm) {
+        log.debug("Creating strategy for algorithm: {}", algorithm);
         return switch (algorithm.toLowerCase()) {
-            case "simple" -> new LoadingStrategySimple();
-            case "maxdense" -> new LoadingStrategyMaxDense();
-            default -> throw new IllegalArgumentException(
-                    "Unknown algorithm: " + algorithm + ". Available: simple, maxdense"
-            );
+            case "simple" -> {
+                log.debug("Selected Simple strategy");
+                yield new LoadingStrategySimple();
+            }
+            case "maxdense" -> {
+                log.debug("Selected MaxDense strategy");
+                yield new LoadingStrategyMaxDense();
+            }
+            default -> {
+                log.error("Unknown algorithm: {}", algorithm);
+                throw new IllegalArgumentException(
+                        "Unknown algorithm: " + algorithm + ". Available: simple, maxdense"
+                );
+            }
         };
     }
 

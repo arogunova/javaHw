@@ -1,6 +1,5 @@
 package ru.hofftech.model;
 
-// Импорты для работы с коллекциями
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +121,6 @@ public class Truck {
         packageInfo[2] = y;
 
         packages.add(packageInfo);
-
     }
 
     public PlacementResult findPositionSimple(Parcel parcel) {
@@ -150,6 +148,11 @@ public class Truck {
         return packages.size();
     }
 
+    public void placePackageAt(Parcel parcel, int x, int y) {
+        PlacementResult result = new PlacementResult(true, x, y);
+        placePackage(parcel, result);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -173,5 +176,9 @@ public class Truck {
         result.append('+');
 
         return result.toString();
+    }
+
+    public List<Object[]> getPackagesInfo() {
+        return new ArrayList<>(packages);
     }
 }
