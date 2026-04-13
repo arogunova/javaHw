@@ -9,6 +9,11 @@ import ru.hofftech.model.Truck;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Простая стратегия загрузки: каждая посылка в отдельной машине.
+ * Плюсы: очень простой код, гарантированно работает.
+ * Минусы: неэффективно использует пространство.
+ */
 public class LoadingStrategySimple implements LoadingStrategy {
     private static final Logger log = LoggerFactory.getLogger(LoadingStrategySimple.class);
 
@@ -23,6 +28,7 @@ public class LoadingStrategySimple implements LoadingStrategy {
             Parcel parcel = parcels.get(i);
             log.info("Processing parcel {}: {}", (i + 1), parcel);
 
+            // Проверка лимита машин
             if (trucks.size() >= maxTrucks) {
                 throw new LoadingException("Need more than " + maxTrucks + " trucks");
             }
@@ -35,7 +41,6 @@ public class LoadingStrategySimple implements LoadingStrategy {
             if (result.isFound()) {
                 truck.placePackage(parcel, result);
                 log.info("  Placed parcel at ({},{})", result.getX(), result.getY());
-
                 trucks.add(truck);
             } else {
                 log.error("  Cannot place parcel even in empty truck!");

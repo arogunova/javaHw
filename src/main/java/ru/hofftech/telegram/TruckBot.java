@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Telegram бот для управления посылками и их загрузкой.
+ * Поддерживает команды: /find-all, /find, /create, /delete, /load.
+ */
 @SuppressWarnings("deprecation")
 public class TruckBot extends TelegramLongPollingBot {
     private static final Logger log = LoggerFactory.getLogger(TruckBot.class);
@@ -24,6 +28,12 @@ public class TruckBot extends TelegramLongPollingBot {
     private final String botUsername;
     private final String botToken;
 
+    /**
+     * Конструктор бота.
+     *
+     * @param botToken токен бота от BotFather
+     * @param botUsername уникальное имя бота (с @)
+     */
     public TruckBot(String botToken, String botUsername) {
         this.botToken = botToken;
         this.botUsername = botUsername;
@@ -54,6 +64,12 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Обрабатывает текстовую команду и возвращает ответ.
+     *
+     * @param command текст команды
+     * @return ответ на команду
+     */
     private String processCommand(String command) {
         String[] parts = command.split(" ");
         String cmd = parts[0];
@@ -79,6 +95,11 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Возвращает список всех посылок.
+     *
+     * @return строковое представление всех посылок
+     */
     private String getAllParcelsResponse() {
         List<Parcel> all = parcelService.getAllParcels();
         if (all.isEmpty()) {
@@ -91,6 +112,12 @@ public class TruckBot extends TelegramLongPollingBot {
         return sb.toString();
     }
 
+    /**
+     * Возвращает информацию о посылке по имени.
+     *
+     * @param name имя посылки
+     * @return строковое представление посылки
+     */
     private String getParcelResponse(String name) {
         try {
             Parcel p = parcelService.getParcelByName(name);
@@ -108,6 +135,12 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Удаляет посылку по имени.
+     *
+     * @param name имя посылки
+     * @return сообщение об удалении
+     */
     private String deleteParcelResponse(String name) {
         try {
             parcelService.deleteParcel(name);
@@ -117,6 +150,13 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Создаёт новую посылку из команды вида:
+     * /create -name "Имя" -form "строка1\nстрока2\nстрока3"
+     *
+     * @param command команда создания
+     * @return результат создания
+     */
     private String createParcelResponse(String command) {
         String paramsPart = command.substring(8).trim();
 
@@ -170,7 +210,6 @@ public class TruckBot extends TelegramLongPollingBot {
         String[] formLines = formString.split("\\\\n");
         List<String> shape = new ArrayList<>(Arrays.asList(formLines));
 
-        // Берём символ из формы — первый непробельный символ
         char symbol = '?';
         for (String line : shape) {
             for (int i = 0; i < line.length(); i++) {
@@ -201,6 +240,13 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Выполняет загрузку посылок по именам и упаковку.
+     * Формат команды: /load -parcels "имя1\nимя2" -type maxdense
+     *
+     * @param command команда загрузки
+     * @return результат упаковки
+     */
     private String loadParcelsResponse(String command) {
         String paramsPart = command.substring(6).trim();
 
@@ -276,6 +322,12 @@ public class TruckBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Отправляет сообщение в чат.
+     *
+     * @param chatId идентификатор чата
+     * @param text текст сообщения
+     */
     private void sendMessage(long chatId, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));

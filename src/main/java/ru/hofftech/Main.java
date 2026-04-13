@@ -15,14 +15,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Главный класс программы.
+ * Поддерживает три режима работы:
+ * 1. Работа с посылками (CRUD)
+ * 2. Погрузка из текстового файла
+ * 3. Загрузка из JSON
+ */
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+        // ========== РЕЖИМ 1: РАБОТА С РЕПОЗИТОРИЕМ ==========
         if (args.length > 0 && (args[0].equals("find-all") ||
                 args[0].equals("find") ||
                 args[0].equals("create") ||
-                args[0].equals("delete"))) {
+                args[0].equals("delete") ||
+                args[0].equals("load"))) {
 
             ParcelRepository repository = new ParcelRepository();
             ParcelService parcelService = new ParcelService(repository);
@@ -94,7 +103,6 @@ public class Main {
                     String[] formLines = formString.split("\\\\n");
                     List<String> shape = new ArrayList<>(Arrays.asList(formLines));
 
-                    // Определяем символ из формы
                     char symbol = '?';
                     for (String line : shape) {
                         for (int j = 0; j < line.length(); j++) {
@@ -229,12 +237,13 @@ public class Main {
             return;
         }
 
-
+        // ========== РЕЖИМ 2: ПОГРУЗКА ИЗ ФАЙЛА ==========
         if (args.length == 0) {
             printUsage();
             return;
         }
 
+        // ========== РЕЖИМ 3: ЗАГРУЗКА ИЗ JSON ==========
         if (args[0].equals("--load")) {
             if (args.length < 2) {
                 System.err.println("Error: Missing JSON file path");
@@ -245,7 +254,6 @@ public class Main {
 
             try {
                 List<Truck> trucks = JsonFileService.loadFromFile(jsonFile);
-
                 TruckLoader loader = new TruckLoader();
                 loader.printTrucks(trucks);
             } catch (Exception e) {
@@ -254,6 +262,7 @@ public class Main {
             return;
         }
 
+        // ========== РЕЖИМ 2 (ПРОДОЛЖЕНИЕ): ПОГРУЗКА ИЗ ФАЙЛА ==========
         if (args.length < 3) {
             log.error("Insufficient arguments provided");
             printUsage();
@@ -325,17 +334,35 @@ public class Main {
     private static void printUsage() {
         System.out.println("=== TRUCK LOADER USAGE ===");
         System.out.println();
-        System.out.println("=== РЕЖИМ 1: Работа с посылками ===");
-        System.out.println("  find-all                    - показать все посылки");
-        System.out.println("  find <name>                 - найти посылку по имени");
-        System.out.println("  create -name <name> -form <form>  - создать (символ определится из формы)");
-        System.out.println("  delete <name>               - удалить посылку");
+        System.out.println("=== РЕЖИМ 1: Работа с посылками (CRUD) ===");
+        System.out.println("  find-all");
+        System.out.println("       Пример: find-all");
         System.out.println();
-        System.out.println("=== РЕЖИМ 2: Погрузка из файла ===");
+        System.out.println("  find <name>");
+        System.out.println("       Пример: find Посылка_тип_1");
+        System.out.println();
+        System.out.println("  create -name <name> -form <form>");
+        System.out.println("       Пример: create -name \"Куб\" -form \"XXX\\nXXX\\nXXX\"");
+        System.out.println();
+        System.out.println("  delete <name>");
+        System.out.println("       Пример: delete Куб");
+        System.out.println();
+        System.out.println("  load -parcels-text \"<name1>\\n<name2>\" -type <algorithm> -out <text|json-file> [-out-filename <file>]");
+        System.out.println("       Пример (текст): load -parcels-text \"Посылка_тип_1\\nКуб\" -type maxdense -out text");
+        System.out.println("       Пример (JSON):  load -parcels-text \"Посылка_тип_1\\nКуб\" -type maxdense -out json-file -out-filename result.json");
+        System.out.println();
+        System.out.println("=== РЕЖИМ 2: Погрузка из текстового файла ===");
         System.out.println("  java ru.hofftech.Main <file-path> <algorithm> <max-trucks> [--save <json-file>]");
+        System.out.println("       Пример: java ru.hofftech.Main test.txt maxdense 3");
+        System.out.println("       Пример с сохранением: java ru.hofftech.Main test.txt maxdense 3 --save result.json");
         System.out.println();
         System.out.println("=== РЕЖИМ 3: Загрузка из JSON ===");
         System.out.println("  java ru.hofftech.Main --load <json-file>");
+        System.out.println("       Пример: java ru.hofftech.Main --load result.json");
+        System.out.println();
+        System.out.println("=== ЗАПУСК TELEGRAM БОТА ===");
+        System.out.println("  java ru.hofftech.telegram.BotRunner");
+        System.out.println("       (требуется файл bot.properties в resources с bot.token и bot.username)");
         System.out.println("=========================");
     }
 }

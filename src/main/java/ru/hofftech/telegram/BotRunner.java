@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Точка входа для запуска Telegram бота.
+ * Читает токен и username из файла bot.properties и регистрирует бота.
+ */
 public class BotRunner {
     private static final Logger log = LoggerFactory.getLogger(BotRunner.class);
 

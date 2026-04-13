@@ -10,9 +10,20 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Класс для чтения посылок из текстового файла.
+ * Формат файла: посылки разделены пустыми строками, каждая посылка представлена несколькими строками текста.
+ */
 public class ParcelFileReader {
     private static final Logger log = LoggerFactory.getLogger(ParcelFileReader.class);
 
+    /**
+     * Читает файл и возвращает список посылок.
+     *
+     * @param filePath путь к файлу с посылками
+     * @return список посылок
+     * @throws IOException если файл не найден или не читается
+     */
     public List<Parcel> readFromFile(String filePath) throws IOException {
         log.info("Reading file: {}", filePath);
 
@@ -43,6 +54,14 @@ public class ParcelFileReader {
         return parcels;
     }
 
+    /**
+     * Создаёт объект Parcel из списка строк.
+     * Определяет символ посылки как первый непробельный символ.
+     *
+     * @param lines строки формы посылки
+     * @return созданная посылка
+     * @throws IllegalArgumentException если в форме нет видимых символов
+     */
     private Parcel createParcel(List<String> lines) {
         char symbol = '?';
         for (String line : lines) {
@@ -62,10 +81,15 @@ public class ParcelFileReader {
         }
 
         log.debug("Created parcel with symbol: {}", symbol);
-        String name = "Посылка из файла";  // пока временно, потом доработаем
+        String name = "Посылка из файла";
         return new Parcel(name, lines, symbol);
     }
 
+    /**
+     * Выводит информацию о всех посылках на экран.
+     *
+     * @param parcels список посылок для печати
+     */
     public void printParcels(List<Parcel> parcels) {
         System.out.println("Total parcels: " + parcels.size());
         System.out.println("-------------------");
