@@ -7,15 +7,23 @@ import java.util.List;
 public class Parcel {
     private static final Logger log = LoggerFactory.getLogger(Parcel.class);
 
+    private final String name;
     private final List<String> shape;
     private final char symbol;
     private final int width;
     private final int height;
     private final int area;
 
-    public Parcel(List<String> shape, char symbol) {
+    public Parcel(String name, List<String> shape, char symbol) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (name.contains(" ")) {
+            throw new IllegalArgumentException("Name cannot contain spaces. Use underscore (_) instead");
+        }
         log.debug("Creating parcel with symbol: {}, shape size: {}", symbol, shape.size());
         validateInput(shape, symbol);
+        this.name = name;
         this.shape = shape;
         this.symbol = symbol;
         this.height = calculateHeight(shape);
@@ -90,9 +98,12 @@ public class Parcel {
         return area;
     }
 
+    public String getName() {
+        return name;
+    }
     @Override
     public String toString() {
-        return String.format("Parcel '%c': %dx%d, area=%d",
-                symbol, width, height, area);
+        return String.format("Parcel '%s': %c %dx%d, area=%d",
+                name, symbol, width, height, area);
     }
 }

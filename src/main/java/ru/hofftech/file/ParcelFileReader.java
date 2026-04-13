@@ -62,7 +62,8 @@ public class ParcelFileReader {
         }
 
         log.debug("Created parcel with symbol: {}", symbol);
-        return new Parcel(lines, symbol);
+        String name = "Посылка из файла";  // пока временно, потом доработаем
+        return new Parcel(name, lines, symbol);
     }
 
     public void printParcels(List<Parcel> parcels) {

@@ -3,6 +3,7 @@ package ru.hofftech.json;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ParcelJson {
+    private String name;
     private List<String> shape;
     private List<Integer> pos;
 
@@ -10,10 +11,15 @@ public class ParcelJson {
     public ParcelJson() {
     }
 
-    public ParcelJson(List<String> shape, int x, int y) {
+    public ParcelJson(String name, List<String> shape, int x, int y) {
+        this.name = name;
         this.shape = shape;
         this.pos = List.of(x, y);
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public List<String> getShape() {
         return shape;

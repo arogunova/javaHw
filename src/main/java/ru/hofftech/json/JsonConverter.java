@@ -37,7 +37,7 @@ public class JsonConverter {
     }
 
     private static ParcelJson parcelToJson(Parcel parcel, int x, int y) {
-        return new ParcelJson(parcel.getShape(), x, y);
+        return new ParcelJson(parcel.getName(), parcel.getShape(), x, y);
     }
 
     public static List<Truck> fromJson(LoadingResultJson result) {
@@ -57,7 +57,9 @@ public class JsonConverter {
         for (ParcelJson parcelJson : truckJson.getParcels()) {
             char symbol = findSymbol(parcelJson.getShape());
 
-            Parcel parcel = new Parcel(parcelJson.getShape(), symbol);
+            String name = parcelJson.getName();
+
+            Parcel parcel = new Parcel(name, parcelJson.getShape(), symbol);  // ✅
 
             int x = parcelJson.getX();
             int y = parcelJson.getY();

@@ -20,6 +20,8 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.5.25")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+
+    implementation("org.telegram:telegrambots:6.9.7.1")
 }
 
 tasks.test {
