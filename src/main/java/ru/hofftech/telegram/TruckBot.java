@@ -131,12 +131,12 @@ public class TruckBot extends TelegramLongPollingBot {
             char c = paramsPart.charAt(i);
             if (c == '"') {
                 inQuotes = !inQuotes;
-                if (!inQuotes && current.length() > 0) {
+                if (!inQuotes && !current.isEmpty()) {
                     tokens.add(current.toString());
                     current = new StringBuilder();
                 }
             } else if (c == ' ' && !inQuotes) {
-                if (current.length() > 0) {
+                if (!current.isEmpty()) {
                     tokens.add(current.toString());
                     current = new StringBuilder();
                 }
@@ -144,7 +144,7 @@ public class TruckBot extends TelegramLongPollingBot {
                 current.append(c);
             }
         }
-        if (current.length() > 0) {
+        if (!current.isEmpty()) {
             tokens.add(current.toString());
         }
 
@@ -168,10 +168,7 @@ public class TruckBot extends TelegramLongPollingBot {
         }
 
         String[] formLines = formString.split("\\\\n");
-        List<String> shape = new ArrayList<>();
-        for (String line : formLines) {
-            shape.add(line);
-        }
+        List<String> shape = new ArrayList<>(Arrays.asList(formLines));
 
         // Берём символ из формы — первый непробельный символ
         char symbol = '?';

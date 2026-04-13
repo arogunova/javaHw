@@ -16,8 +16,8 @@ public class BotRunner {
     public static void main(String[] args) {
         log.info("BotRunner запущен");
 
-        String botToken = null;
-        String botUsername = null;
+        String botToken;
+        String botUsername;
 
         try (InputStream input = BotRunner.class.getClassLoader().getResourceAsStream("bot.properties")) {
             if (input == null) {
