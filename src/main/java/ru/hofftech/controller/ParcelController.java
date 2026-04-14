@@ -2,9 +2,10 @@ package ru.hofftech.controller;
 
 import ru.hofftech.model.Parcel;
 import ru.hofftech.service.ParcelJpaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/parcels")
@@ -16,9 +17,12 @@ public class ParcelController {
         this.parcelJpaService = parcelJpaService;
     }
 
+    /**
+     * GET /api/parcels?page=0&size=3
+     */
     @GetMapping
-    public List<Parcel> getAllParcels() {
-        return parcelJpaService.getAllParcels();
+    public Page<Parcel> getAllParcels(@PageableDefault(size = 10) Pageable pageable) {
+        return parcelJpaService.getAllParcels(pageable);
     }
 
     @GetMapping("/{name}")
@@ -34,6 +38,6 @@ public class ParcelController {
 
     @DeleteMapping("/{name}")
     public void deleteParcel(@PathVariable String name) {
-        parcelJpaService.deleteParcel(name);  // ← исправлено
+        parcelJpaService.deleteParcel(name);
     }
 }

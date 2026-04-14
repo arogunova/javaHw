@@ -1,12 +1,13 @@
 package ru.hofftech.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.hofftech.entity.ParcelEntity;
 import ru.hofftech.model.Parcel;
 import ru.hofftech.repository.ParcelJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ParcelJpaService {
@@ -17,10 +18,8 @@ public class ParcelJpaService {
         this.parcelRepository = parcelRepository;
     }
 
-    public List<Parcel> getAllParcels() {
-        return parcelRepository.findAll().stream()
-                .map(this::toModel)
-                .collect(Collectors.toList());
+    public Page<Parcel> getAllParcels(Pageable pageable) {
+        return parcelRepository.findAll(pageable).map(this::toModel);
     }
 
     public Parcel getParcelByName(String name) {
@@ -37,7 +36,6 @@ public class ParcelJpaService {
         int height = shape.size();
         int width = calculateWidth(shape);
         int area = calculateArea(shape, symbol);
-        // Убрали преобразование в строку — передаём List напрямую
         ParcelEntity entity = new ParcelEntity(name, symbol, shape, width, height, area);
         parcelRepository.save(entity);
     }
