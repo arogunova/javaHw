@@ -3,13 +3,20 @@ package ru.hofftech.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Модель кузова грузовика.
+ * Размер кузова — 6×6 клеток.
+ * Обеспечивает проверку возможности размещения посылки, её размещение и поиск места.
+ */
 public class Truck {
     public static final int SIZE = 6;
 
     private final char[][] grid;
-
     private final List<Object[]> packages;
 
+    /**
+     * Конструктор. Создаёт пустой кузов, все клетки заполнены пробелами.
+     */
     public Truck() {
         this.grid = new char[SIZE][SIZE];
 
@@ -22,6 +29,15 @@ public class Truck {
         this.packages = new ArrayList<>();
     }
 
+    /**
+     * Проверяет, можно ли разместить посылку в указанной позиции.
+     * Учитывает границы кузова, занятость клеток и правило опоры (>50% основания).
+     *
+     * @param parcel посылка
+     * @param x координата X левого нижнего угла
+     * @param y координата Y левого нижнего угла (0 — дно)
+     * @return true, если разместить можно
+     */
     public boolean canPlace(Parcel parcel, int x, int y) {
         if (x + parcel.getWidth() > SIZE) {
             System.out.println("  Cannot place: too wide (needs " + parcel.getWidth() +
@@ -88,6 +104,13 @@ public class Truck {
         return hasGoodSupport;
     }
 
+    /**
+     * Размещает посылку в кузове по результату поиска места.
+     *
+     * @param parcel посылка
+     * @param result результат поиска (содержит координаты)
+     * @throws IllegalArgumentException если место не найдено
+     */
     public void placePackage(Parcel parcel, PlacementResult result) {
         if (!result.isFound()) {
             throw new IllegalArgumentException("Cannot place parcel: no position found");
@@ -123,6 +146,13 @@ public class Truck {
         packages.add(packageInfo);
     }
 
+    /**
+     * Простой алгоритм поиска места для посылки.
+     * Ищет первую подходящую позицию снизу вверх, слева направо.
+     *
+     * @param parcel посылка
+     * @return результат поиска с координатами или флагом неудачи
+     */
     public PlacementResult findPositionSimple(Parcel parcel) {
         System.out.println("  Looking for place for parcel '" + parcel.getSymbol() +
                 "' (" + parcel.getWidth() + "x" + parcel.getHeight() + ")");
@@ -148,11 +178,27 @@ public class Truck {
         return packages.size();
     }
 
+    /**
+     * Размещает посылку по заданным координатам.
+     *
+     * @param parcel посылка
+     * @param x координата X
+     * @param y координата Y
+     */
     public void placePackageAt(Parcel parcel, int x, int y) {
         PlacementResult result = new PlacementResult(true, x, y);
         placePackage(parcel, result);
     }
 
+    /**
+     * Возвращает строковое представление кузова в формате:
+     * +------+
+     * |      |
+     * | 99   |
+     * +------+
+     *
+     * @return строковое представление кузова
+     */
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -178,6 +224,12 @@ public class Truck {
         return result.toString();
     }
 
+    /**
+     * Возвращает список всех размещённых посылок с их координатами.
+     * Каждый элемент — массив [Parcel, x, y].
+     *
+     * @return копия списка размещённых посылок
+     */
     public List<Object[]> getPackagesInfo() {
         return new ArrayList<>(packages);
     }

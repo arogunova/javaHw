@@ -9,6 +9,12 @@ import ru.hofftech.model.Truck;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Стратегия максимально плотной загрузки.
+ * Старается использовать минимум машин, максимально заполняя каждую.
+ * Алгоритм: сортировка посылок от больших к маленьким, размещение в существующих машинах,
+ * при невозможности — создание новой машины.
+ */
 public class LoadingStrategyMaxDense implements LoadingStrategy {
     private static final Logger log = LoggerFactory.getLogger(LoadingStrategyMaxDense.class);
 
@@ -17,6 +23,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
         log.info("--- USING MAX DENSE LOADING STRATEGY ---");
         log.info("Trying to pack parcels as tightly as possible");
 
+        // Сортировка посылок от больших к маленьким
         List<Parcel> sortedParcels = new ArrayList<>(parcels);
         sortedParcels.sort((p1, p2) -> Integer.compare(p2.getArea(), p1.getArea()));
 
@@ -33,6 +40,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
 
             boolean placed = false;
 
+            // Попытка разместить в существующих машинах
             for (int t = 0; t < trucks.size(); t++) {
                 Truck truck = trucks.get(t);
                 log.debug("  Trying existing truck #{}", (t + 1));
@@ -49,6 +57,7 @@ public class LoadingStrategyMaxDense implements LoadingStrategy {
                 }
             }
 
+            // Если не разместили — создаём новую машину
             if (!placed) {
                 log.info("  No space in existing trucks, creating new truck #{}", (trucks.size() + 1));
 

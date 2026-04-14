@@ -110,12 +110,12 @@ public class TruckLoaderTest {
         List<String> baseShape = new ArrayList<>();
         baseShape.add("XX");
         baseShape.add("XX");
-        Parcel base = new Parcel(baseShape, 'X');
+        Parcel base = new Parcel("Основание", baseShape, 'X');  // ← добавили name
 
         // Создаем длинную посылку 2x1
         List<String> longShape = new ArrayList<>();
         longShape.add("YY");
-        Parcel longParcel = new Parcel(longShape, 'Y');
+        Parcel longParcel = new Parcel("Длинная", longShape, 'Y');  // ← добавили name
 
         // Создаем машину и ставим основание
         Truck truck = new Truck();
@@ -156,7 +156,7 @@ public class TruckLoaderTest {
         for (int i = 0; i < 6; i++) {
             fullShape.add("111111");
         }
-        Parcel fullParcel = new Parcel(fullShape, '1');
+        Parcel fullParcel = new Parcel("тест", fullShape, '1');
 
         List<Parcel> oneParcel = new ArrayList<>();
         oneParcel.add(fullParcel);
@@ -219,6 +219,7 @@ public class TruckLoaderTest {
             {
               "parcels": [
                 {
+                  "name": "Посылка_тип_9",
                   "shape": ["999","999","999"],
                   "pos": [0,0]
                 }
@@ -259,18 +260,18 @@ public class TruckLoaderTest {
         shape1.add("999");
         shape1.add("999");
         shape1.add("999");
-        parcels.add(new Parcel(shape1, '9'));
+        parcels.add(new Parcel("Тестовая_посылка_1", shape1, '9'));
 
         // Посылка 6 (2x2)
         List<String> shape2 = new ArrayList<>();
         shape2.add("66");
         shape2.add("66");
-        parcels.add(new Parcel(shape2, '6'));
+        parcels.add(new Parcel("Тестовая_посылка_2", shape2, '6'));
 
         // Посылка 1 (1x1)
         List<String> shape3 = new ArrayList<>();
         shape3.add("1");
-        parcels.add(new Parcel(shape3, '1'));
+        parcels.add(new Parcel("Тестовая_посылка_3", shape3, '1'));
 
         return parcels;
     }
