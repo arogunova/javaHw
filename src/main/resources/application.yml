@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: truck-loader
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/truckdb
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  shell:
+    interactive:
+      enabled: true
+
+logging:
+  level:
+    ru.hofftech: DEBUG
+    org.springframework.web: INFO
+
+bot:
+  token: 8745576544:AAE9SwYiA7sPC2rfelfbaaD00NV0L4a7WL0
+  username: truck_loader_bot
